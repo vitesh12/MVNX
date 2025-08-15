@@ -194,6 +194,7 @@ header {
     <button class="tab-button active" style="background:#e0f7fa;" onclick="openTab(event, 'PortingGuide')">📲 PORTING</button>
 	<button class="tab-button" style="background:#fff3e0;" onclick="openTab(event, 'tierAOE')">📌 Tier III Areas of Emphasis</button>
 	<button class="tab-button" style="background:#ffebee;" onclick="openTab(event, 'PortingTroubleshooting')">📨 Case</button>
+	<button class="tab-button" style="background:#d7ede8;" onclick="openTab(event, 'Pso')">🎡 PSO</button>
 	<button class="tab-button" style="background:#f3e5f5;" onclick="openTab(event, 'VTMCreation')">🕹️ VTM</button>
 	<button class="tab-button" style="background:#dcedc8;" onclick="openTab(event, 'Device')">📡 Device</button>
 	<button class="tab-button" style="background:#ffe0b2;" onclick="openTab(event, 'MVNONotification')">📢 MVNO Notification</button>
@@ -921,6 +922,442 @@ header {
     </div>
 </div>
 
+<!-- PSO -->
+<div id="Pso" class="tab-content">
+    <div class="content">
+		<h2>PSO</h2>
+        <div class="card info">
+			<h2>📡 Monitoring Queues & E-mails</h2>
+
+			<div class="card highlight-card">
+				<h3>🧭 Monitoring Queues & Channels Overview</h3>
+				<ul>
+					<li><b>ON Call Calendar:</b> Identify CST & AT&T on-call reps.</li>
+					<li><b>CSI Alarms!!:</b> Alerts for service/API failures.</li>
+					<li><b>Results:</b> Activation flow metrics for daily reporting.</li>
+					<li><b>CCI PA Monitoring (GDDN):</b> Partner activation issues.</li>
+					<li><b>PREPAID PA Monitoring (GDDN):</b> Tier payment issues.</li>
+					<li><b>OSS PA Monitoring:</b> Awaiting guidelines for MIND issue detection.</li>
+					<li><b>Portal Sys Health Check:</b> Monitors ELK, VTM, ServiceNow APIs.</li>
+				</ul>
+			</div>
+			<div class="card highlight-card">
+				<h3>🚨 CSI Alarms & Error Matrix</h3>
+				<p><b>Error Types:</b></p>
+				<ul>
+					<li><b>Hard Errors:</b> Codes 100, 200, 900 (CSI Engagement Required)</li>
+					<li><b>Soft Errors:</b> Codes 300, 400, 500 (MVNO Issues)</li>
+				</ul>
+				<p><b>CSI Alert Handling:</b></p>
+				<ul>
+					<li>Single Partner &lt;100 alerts → ACK, Monitor</li>
+					<li>Repeated Alerts / Multiple Partners → ACK, Engage CSI</li>
+					<li>Soft Errors → ACK, No CSI escalation unless high volume</li>
+				</ul>
+			</div>
+			<div class="card highlight-card">
+				<h3>📡 PA Monitoring Protocols</h3>
+				<p><b>Trigger:</b> &gt;10 TN fallouts in 15 mins (excluding Active, Cancel, Reserved, Suspended)</p>
+				<p><b>Action Steps:</b></p>
+				<ul>
+					<li>Check TN status in TLG & Ericsson</li>
+					<li>If inactive → Contact CSI with ConvID & TNs</li>
+					<li>Notify PSO team</li>
+					<li>Request Open Search check</li>
+					<li>Notify Partner</li>
+					<li>ACK alert in MVNO CSI Chat</li>
+				</ul>
+			</div>
+			<div class="card highlight-card">
+				<h3>💳 Prepaid PA Monitoring – No/Delay Tier Payment</h3>
+				<p><b>Subscriber Status 300:</b></p>
+				<ul>
+					<li>Do NOT escalate to CSI</li>
+					<li>Escalate in PSO Chat Room</li>
+				</ul>
+				<p><b>Notification Criteria:</b></p>
+				<ul>
+					<li>&lt;25 TNs/day → Individual tickets, hourly notifications</li>
+					<li>Bulk fallouts → One ticket, notify CSM, single hourly notification</li>
+				</ul>
+			</div>
+			<div class="card highlight-card">
+				<h3>📧 Sample Email – No Alerts</h3>
+				<pre style="white-space: pre-wrap; background:#fafafa; border-left:4px solid #ccc; padding:10px;">
+To: Eddie Kuse
+CC: Joshua Picaro, Artem Polosukhin, SDDDPCTeam
+Subject: No alerts in Monitoring Chatroom
+
+Hi Eddie,
+
+We have not seen any new alerts in 4-CCI PA Monitoring Chatroom since Yesterday 7:10 PM ET.
+
+Please review and advise if we should inform partners.
+				</pre>
+			</div>
+			<div class="card highlight-card">
+				<h3>🛠 Portal System Health Check</h3>
+				<p><b>Monitored APIs:</b> ELK, VTM, ServiceNow</p>
+				<p><b>Alert Logic:</b></p>
+				<ul>
+					<li>Health check every 10 mins</li>
+					<li>3 consecutive failures → 1 alert every 30 mins</li>
+					<li>Extended outages → multiple alerts</li>
+				</ul>
+				<p><b>Action:</b> Email Eddie Kuse, CC SD_DDPC, Picaro, Palosukhin & Notify CST via PSO chat</p>
+
+			</div>
+			<div class="card highlight-card">
+				<h3>🆘 E911 Errors – Twinning API</h3>
+				<ul>
+					<li>Issue: Sync failures for wearable devices</li>
+					<li>Action: Inform CST On-Call, Respond with “Teams are engaged and investigating.”</li>
+					<li>MVNO testing contact: mvno_twinningapi@list.att.com</li>
+				</ul>
+				</div>
+				<div class="card highlight-card">
+				<h3>📨 GTOC Ticket & Email Handling</h3>
+				<p><b>Keywords to Watch:</b> TELEGENCE, TORCH, PEARS, GEARS, MTI, GDDN, MIND, E911, Ericsson, Conexus, SYNIVERSE</p>
+				<p><b>Action:</b> If keyword found → Join call, follow C2W procedure, communicate in PSO chat</p>
+			</div>
+			<div class="card highlight-card">
+				<h3>🧾 Billing – Severity 1 Case Handling</h3>
+				<ul>
+					<li>Criteria: Category = Billing, Impact = Sev 1</li>
+					<li>Exclude: Billing-Subscriber</li>
+					<li>Action: Email AT&T Finance & add work note</li>
+				</ul>
+			</div>
+			<div class="card highlight-card">
+				<h3>🧠 TMF API Error Codes</h3>
+				<table>
+					<tr><th>Error Code</th><th>Reason</th><th>Status Code</th><th>Type</th></tr>
+					<tr><td>60000002002</td><td>Internal error</td><td>400</td><td>Process</td></tr>
+					<tr><td>60000002003</td><td>Server unavailable</td><td>500</td><td>Process</td></tr>
+					<tr><td>60000002004</td><td>Request timed out</td><td>500</td><td>Process</td></tr>
+					<tr><td>60000002005</td><td>Request not supported</td><td>400</td><td>Process</td></tr>
+					<tr><td>60000002006</td><td>Invalid credentials/token</td><td>500</td><td>Process</td></tr>
+					<tr><td>60000002007</td><td>Invalid message format</td><td>400</td><td>Process</td></tr>
+					<tr><td>60000002009</td><td>Unauthorized sender</td><td>400</td><td>Process</td></tr>
+					<tr><td>70000002002–09</td><td>Same errors</td><td>401–503</td><td>System</td></tr>
+				</table>
+			</div>
+
+		</div>
+
+        <div class="card warning">
+			<h2>🔍 Error Matrix</h2>
+			<div class="card highlight-card">
+				<h3>Error Categories</h3>
+				<ul>
+					<li><strong>Hard Errors (Require CSI Engagement):</strong> Codes: <code>100</code>, <code>200</code>, <code>900</code> – Application-based issues.</li>
+					<li><strong>Soft Errors (CSI Engagement only if volume is high):</strong> Codes: <code>300</code>, <code>400</code>, <code>500</code> – MVNO partner-related issues.</li>
+				</ul>
+			</div>
+			<div class="card highlight-card">
+				<h3>Impact Levels</h3>
+				<ul>
+					<li><span class="highlight">Low Impact:</span> 1–100 errors</li>
+					<li><span class="warning">Medium/High Impact:</span> Over 100 errors</li>
+				</ul>
+			</div>
+			<div class="card highlight-card">
+				<h3>🚨 CSI Alarms & Monitoring Actions</h3>
+				<table>
+					<thead>
+						<tr>
+							<th>Error Code</th>
+							<th>Scenario</th>
+							<th>CSI Chat Room Acknowledgement</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr><td>100 / 200</td><td>Single Partner &lt; 100 alerts </td><td>ACK, Monitoring</td></tr>
+						<tr><td>100 / 200</td><td>Single Partner – repeated alerts</td><td>ACK, Engage CSI</td></tr>
+						<tr><td>100 / 200</td><td>Multiple Partners</td><td>ACK, Engage CSI</td></tr>
+						<tr><td>300 / 400 / 500</td><td>Any scenario</td><td>ACK, Soft Error</td></tr>
+						<tr><td>400</td><td>High volume / multiple partners</td><td>ACK, Engage CSI</td></tr>
+						<tr><td>900</td><td>Low volume, one partner</td><td>Contact On-Call Rep</td></tr>
+						<tr><td>900</td><td>High volume, multiple partners</td><td>ACK, Engage CSI</td></tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="card highlight-card">
+				<h3>📡 PA Monitoring Protocols</h3>
+				<ul>
+					<li><strong>Trigger:</strong> 10+ alerts in 15 mins (excluding "Active", "Cancel", "Suspended", "Reserved")</li>
+					<li><strong>Action:</strong>
+						<ul>
+							<li>Escalate to CSI Team</li>
+							<li>Provide Conversation IDs</li>
+							<li>Monitor response and resolution</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+			<div class="card highlight-card">
+				<h4>Prepaid PA Monitoring Enhancements (Post 01/10/2023)</h4>
+				<ul>
+					<li>New Feature: Returns samples of failed & successful transactions</li>
+					<li>Purpose: Helps CSI troubleshoot root causes</li>
+					<li>Note: Manual ServiceNow entry still required</li>
+				</ul>
+			</div>
+			<div class="card highlight-card">
+				<h3>🧾 TMF API Alerts</h3>
+				<table>
+					<thead>
+						<tr>
+							<th>Error Code</th>
+							<th>Description</th>
+							<th>Status Code</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr><td>60000002002</td><td>Internal error</td><td>400</td></tr>
+						<tr><td>60000002003</td><td>Internal server unavailable</td><td>500</td></tr>
+						<tr><td>60000002004</td><td>Internal server request timed out</td><td>500</td></tr>
+						<tr><td>60000002005</td><td>Request not supported</td><td>400</td></tr>
+						<tr><td>60000002006</td><td>Invalid credentials/token</td><td>500</td></tr>
+						<tr><td>60000002007</td><td>Invalid message format</td><td>400</td></tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="card highlight-card">
+				<h4>Action Plan</h4>
+				<ul>
+					<li><strong>400 Errors:</strong> Review for partner-side issues; escalate only if volume is high</li>
+					<li><strong>500 Errors:</strong> Server-side issues; escalate to CSI immediately</li>
+					<li><strong>Credential/Token Errors:</strong> Verify partner access</li>
+					<li><strong>Message Format Errors:</strong> Validate API payload structure</li>
+				</ul>
+			</div>
+			<div class="card highlight-card">
+				<h3>✅ Operational Recommendations</h3>
+				<ul>
+					<li>Daily Monitoring: Watch for spikes and repeated error codes</li>
+					<li>Escalation Thresholds: 10+ alerts in 15 mins</li>
+					<li>CSI Engagement: Use CSI Chat Room &amp; ServiceNow for tracking</li>
+					<li>Documentation: Keep logs of ACKs, escalations &amp; resolutions</li>
+				</ul>
+			</div>
+			
+		</div>
+
+		<div class="card urgent">
+			<h2>📧 Ericsson </h2>
+			<p><strong>Purpose:</strong> Request technical assistance from Ericsson for MVNO-related issues, ensuring all relevant troubleshooting steps and context are clearly communicated.</p>
+
+    
+			<div class="card highlight-card">
+				<h3>📍 Recipients</h3>
+				<ul>
+					<li><strong>To:</strong> Rhoannie Valera &lt;rhoannie.valera@ericsson.com&gt;, NMC Prepaid &lt;nmc.prepaid@ericsson.com&gt;, Iftekhar Ahmed &lt;iftekhar.ahmed@ericsson.com&gt;</li>
+					<li><strong>CC:</strong> SDDDPCTeam &lt;SD_DDPC_Team@sequentialtech.com&gt;</li>
+				</ul>
+			</div>
+			<div class="card highlight-card">
+				<h3>✉️ Subject Line Format</h3>
+				<pre style="white-space: pre-wrap; background:#fafafa; border-left:4px solid #ccc; padding:10px;"><code>(Partner Name) | TN: (Telephone Number) | Case #: (ServiceNow or internal case ID)</code></pre>
+			</div>
+			<div class="card highlight-card">
+				<h3>📄 Email Body Template</h3>
+				<pre style="white-space: pre-wrap; background:#fafafa; border-left:4px solid #ccc; padding:10px;">
+Hello Ericsson Team,
+
+TN: [Insert Telephone Number]
+Market: [Insert Market Name]
+Rate Plan: [Insert Rate Plan Name]
+
+We have received an inquiry from [MVNO Partner Name] stating that [brief description of the issue].
+
+Troubleshooting Steps Taken:
+1. Verified TN status in TLG and Ericsson Care.
+2. Checked for any CSI alerts or API failures.
+3. Confirmed issue not MVNO-side provisioning.
+4. Attempted Open Search API validation (if applicable).
+5. [Other relevant steps]
+
+Request:
+Kindly investigate and advise on root cause & resolution. Let us know if additional information is required.
+
+Thank you,
+[Your Name]
+MVNO Support Team
+[Your ATT ID]
+				</pre>
+			</div>
+			<div class="card highlight-card">
+			<h3>✅ Best Practices</h3>
+				<ul>
+					<li>Always include TN, Market, and Rate Plan.</li>
+					<li>Summarize troubleshooting clearly to avoid back-and-forth.</li>
+					<li>Attach screenshots or logs if available.</li>
+					<li>Use consistent formatting for easier tracking and escalation.</li>
+					<li>Save a copy of the sent email in the shared folder for audit purposes.</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="card info">
+			<h2>🛰️ GDDN (Global Device Data Network)</h2>
+			<div class="card highlight-card">
+				<h3>🧭 What is a GDDN Issue?</h3>
+				<p>GDDN issues typically appear in <strong>“5 - Prepaid PA Monitoring”</strong> alerts and may indicate problems with device provisioning, activation, or porting. These can affect multiple partners and markets.</p>
+			</div>
+			<div class="card highlight-card">
+				<h3>📌 Criteria to Create a C2W</h3>
+				<ul>
+					<li><strong>Trigger:</strong> 10+ alerts in the last 15 minutes, all related to GDDN.</li>
+					<li>Repeated alerts may indicate TLG → GDDN issues.</li>
+					<li><strong>Confirmation:</strong> Always confirm with on-call CST before initiating a C2W.</li>
+				</ul>
+			</div>
+			<div class="card highlight-card">
+				<h3>🛠️ Steps to Create a C2W for GDDN Issue</h3>
+				<ol>
+					<li><strong>Access GTOC Portal:</strong> <a href="https://onetool.web.att.com/c2w" target="_blank">https://onetool.web.att.com/c2w</a></li>
+					<li><strong>Create New C2W:</strong> Click “Create a New Applications Services CTW”.</li>
+					<li><strong>Search iTAP:</strong>  
+						<ul>
+							<li>Enter: <code>GRID - GDDN</code></li>
+							<li>Click “Load Name” → “Save”</li>
+						</ul>
+					</li>
+					<li><strong>Fill in C2W Form:</strong>  
+						<ul>
+							<li>CTW Type: Application Services</li>
+							<li>One Tool Incident ID: Leave blank (auto-generated)</li>
+							<li>Subject Line: GDDN Issue</li>
+							<li>Severity Level: Sev 3</li>
+							<li><strong>Troubleshooting Being Reported:</strong> Include alert volume, partner(s) impacted, TNs affected, and checks in TLG/Ericsson/ServiceNow.</li>
+						</ul>
+					</li>
+					<li><strong>Submit & Share:</strong> Share generated C2W Incident/Meeting Link with CST Team, MVNO Teams Chatroom, and stakeholders.</li>
+				</ol>
+
+			</div>
+			<div class="card highlight-card">
+				<h3>📍 Where to Engage</h3>
+				<p>MS Teams → MVNO → “CCI and PREPAID PA MONITORING” chatrooms</p>
+			</div>
+			<div class="card highlight-card">
+				<h3>👥 System Contacts</h3>
+				<ul>
+					<li><strong>MOTS ID:</strong> 22509</li>
+					<li><strong>Contact:</strong> Susan E Sheehan</li>
+				</ul>
+			</div>
+			<div class="card highlight-card">
+				<h3>🔁 Duplicate GDDN Alarms Handling</h3>
+				<ul>
+					<li>Check TN status in ServiceNow → TN Ports.</li>
+					<li>Verify if TN has been worked/resolved in Telegence.</li>
+					<li>Escalate to Porting Team (DDPC War Room) via new TN conversation.</li>
+					<li>Example: TN successfully replayed by Wavelo after escalation.</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="card warning">
+			<h2>T APM (AT&T Application Performance Management) Monitoring Process</h2>
+			<div class="card highlight-card">
+				<h3>🧭 Overview: What is T APM?</h3>
+				<p>T APM is AT&T’s Application Performance Management tool, powered by Glowroot (open-source). It provides real-time monitoring, diagnostics, and performance insights for applications—without needing to manually check logs or configurations.</p>
+			</div>
+			<div class="card highlight-card">
+				<h3>📋 Applications Monitored</h3>
+				<ul>
+					<li><strong>MOTS ID:</strong> 23901</li>
+					<li><strong>Application Names:</strong>
+						<ul>
+							<li>AZCSIAJSC-23901</li>
+							<li>CSICPSVC-23901</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+			<div class="card highlight-card">
+				<h3>🔍 Steps to Use T APM</h3>
+				<ol>
+					<li><strong>Launch T APM UI:</strong> Select your application from the dropdown & click “Proceed to TAPM”.</li>
+					<li><strong>Switch to Error Tab:</strong> View service-level issues.</li>
+					<li><strong>Select Service:</strong> Choose the specific service to monitor.</li>
+					<li><strong>Set Time Duration:</strong> Select desired time window.</li>
+				</ol>
+			</div>
+			<div class="card highlight-card">
+				<h3>🧾 Services to Monitor</h3>
+				<table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%;">
+					<tr>
+						<th>Application</th>
+						<th>Service Name</th>
+					</tr>
+					<tr>
+						<td>AZCSIAJSC-23901</td>
+						<td>TwinningRelation-v1-PROD</td>
+					</tr>
+					<tr>
+						<td>AZCSIAJSC-23901</td>
+						<td>TwinningRelation-v2-PROD</td>
+					</tr>
+					<tr>
+						<td>AZCSIAJSC-23901</td>
+						<td>E911Address-v3-PROD</td>
+					</tr>
+					<tr>
+						<td>CSICPSVC-23901</td>
+						<td>CSICPSVC-23901-TwinningRelation-v1</td>
+					</tr>
+					<tr>
+						<td>CSICPSVC-23901</td>
+						<td>CSICPSVC-23901-TwinningRelation-v2</td>
+					</tr>
+					<tr>
+						<td>CSICPSVC-23901</td>
+						<td>CSICPSVC-23901-E911Address-v3</td>
+					</tr>
+				</table>
+			</div>
+			<div class="card highlight-card">
+				<h3>📈 Monitoring Protocol</h3>
+				<ul>
+					<li><strong>Frequency:</strong> Hourly</li>
+					<li><strong>Responsible Team:</strong> GRGN</li>
+					<li><strong>Action:</strong>
+						<ul>
+							<li>Extract data for listed services</li>
+							<li>Share in PSO Chatroom</li>
+							<li>Save in HVD → Teams Channel → General → Files → STI FILES → T APM Folder → TAPM Daily Summary List</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+			<div class="card highlight-card">
+				<h3>🚨 Escalation Criteria</h3>
+				<p>If a spike or anomaly is observed in any listed services:</p>
+				<ul>
+					<li>GRGN team must inform the Internal CST group immediately.</li>
+					<li>Include:
+						<ul>
+							<li>Service name</li>
+							<li>Time of spike</li>
+							<li>Error details</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+
+
+
+
+    </div>
+</div>
+
+
+
 <!-- VTM creation -->
 <div id="VTMCreation" class="tab-content">
 
@@ -1153,7 +1590,7 @@ header {
     <h2>📢 Miscellaneous</h2>
     <div class="content">
         <div class="card info">MOTO's: <code>SN → 32719, MVNO → 33062</code></div>
-        <div class="card info"> </div>
+        <div class="card info">mail ID's will always go to BCC, because we don't want to display </div>
         <div class="card info"> </div>
         <div class="card info"> </div>
         <div class="card warning"> </div>
