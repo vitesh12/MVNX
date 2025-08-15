@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MVNO</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background: #f4f4f4;
+    }
+    header {
+        background: #333;
+        color: #fff;
+        padding: 10px 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    header h1 {
+        margin: 0;
+        font-size: 1.2rem;
+    }
+    header input {
+        padding: 5px;
+        border: none;
+        border-radius: 4px;
+        width: 250px;
+    }
+    .tabs {
+        display: flex;
+        flex-wrap: wrap;
+        background: #ddd;
+    }
+    .tab-button {
+        flex: 1;
+        padding: 10px;
+        cursor: pointer;
+        text-align: center;
+        font-weight: bold;
+        border: none;
+        outline: none;
+        transition: background 0.3s;
+    }
+    .tab-button.active {
+        background: #fff;
+    }
+    .tab-content {
+        display: none;
+        padding: 15px;
+        background: #fff;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    .card {
+        border-radius: 6px;
+        padding: 10px;
+        margin: 10px 0;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .info { background: #e0f7fa; border-left: 5px solid #00acc1; }
+    .warning { background: #fff3e0; border-left: 5px solid #fb8c00; }
+    .urgent { background: #ffebee; border-left: 5px solid #e53935; }
+    .highlight-card { background: #f3e5f5; border-left: 5px solid #8e24aa; }
+    .highlight {
+    background: none; /* remove background color */
+    padding-left: 20px;
+    position: relative;
+    font-weight: bold;
+    color: inherit;
+}
+
+
+header {
+    background: #1f2937; /* Dark gray header */
+    padding: 15px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+#searchInput {
+    width: 60%;
+    max-width: 300px;
+    padding: 12px 20px 12px 45px;
+    font-size: 16px;
+    border: 2px solid #3b82f6; /* Blue border */
+    border-radius: 50px;
+    outline: none;
+    background-color: #f9fafb;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%233b82f6" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0s.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: 15px center;
+    background-size: 20px 20px;
+    transition: all 0.3s ease;
+}
+
+#searchInput:focus {
+    border-color: #2563eb; /* Darker blue */
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
+    background-color: #ffffff;
+}
+.tabs {
+    display: flex;
+    flex-wrap: nowrap; /* prevent wrapping */
+    overflow-x: auto; /* enable horizontal scroll */
+    gap: 6px;
+    background: #fff;
+    padding: 10px;
+    border-bottom: 2px solid #ddd;
+    scroll-behavior: smooth; /* smooth horizontal scroll */
+}
+
+/* Hide scrollbar (Webkit browsers) */
+.tabs::-webkit-scrollbar {
+    height: 6px;
+}
+.tabs::-webkit-scrollbar-track {
+    background: transparent;
+}
+.tabs::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.2);
+    border-radius: 4px;
+}
+
+/* Tab buttons */
+.tab-button {
+    flex: 0 0 auto; /* don't stretch, keep size */
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    white-space: nowrap;
+    transition: all 0.2s ease-in-out;
+}
+
+.tab-button.active {
+    outline: 2px solid #00796b;
+}
+
+.tab-button:hover {
+    transform: scale(1.05);
+}
+.tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+.tool-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 14px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.tool-card .tool-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+.tool-card.info { background: #e0f7fa; border: 1px solid #00acc1; color: #004d40; }
+.tool-card.warning { background: #fff3e0; border: 1px solid #fb8c00; color: #e65100; }
+.tool-card.urgent { background: #ffebee; border: 1px solid #e53935; color: #b71c1c; }
+.tool-card.highlight-card { background: #f3e5f5; border: 1px solid #8e24aa; color: #4a148c; }
+
+.tool-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+
+</style>
+</head>
+<body>
+
+<header>
+<h1>📚 MVNO</h1>
+    <input type="text" id="searchInput" placeholder="Search..." oninput="searchContent()">
+</header>
+
+
+<div class="tabs">
+    <button class="tab-button active" style="background:#e0f7fa;" onclick="openTab(event, 'PortingGuide')">📲 PORTING</button>
+	<button class="tab-button" style="background:#fff3e0;" onclick="openTab(event, 'tierAOE')">📌 Tier III Areas of Emphasis</button>
+	<button class="tab-button" style="background:#ffebee;" onclick="openTab(event, 'PortingTroubleshooting')">📨 Case</button>
+	<button class="tab-button" style="background:#f3e5f5;" onclick="openTab(event, 'VTMCreation')">🕹️ VTM</button>
+	<button class="tab-button" style="background:#dcedc8;" onclick="openTab(event, 'Device')">📡 Device</button>
+	<button class="tab-button" style="background:#ffe0b2;" onclick="openTab(event, 'MVNONotification')">📢 MVNO Notification</button>
+	<button class="tab-button" style="background:#d1c4e9;" onclick="openTab(event, 'MDE')">📂 MDE</button>
+	<button class="tab-button" style="background:#ffccbc;" onclick="openTab(event, 'Tools')">🛠 Tools</button>
+	<button class="tab-button" style="background:#d7ede8;" onclick="openTab(event, 'Miscellaneous')">🎡 Miscellaneous</button>
+
+	
+</div>
+
+<!-- DOC: MVNO - PORTING - Step Guide New -->
+<div id="PortingGuide" class="tab-content active">
+    <div class="content">
+	<h2>📄 DOC: MVNO - PORTING - Step Guide New</h2>
+        <div class="card highlight-card">
+            <h3>🔹 Identify Port Request Details</h3>
+            <ul>
+                <li>Open <b>PEARS</b> → Input TN (Telephone Number)</li>
+                <li>Click <b>Check Port Eligibility / Reference Data</b></li>
+                <li>Retrieve:
+                    <ul>
+                        <li>Portability (Yes/No)</li>
+                        <li>Current Service Provider Name & Type</li>
+                        <li>Market Code</li>
+                    </ul>
+                </li>
+            </ul>
+			<div class="card info">
+				<h3>🔹 Validate in Telegence (TLG)</h3>
+				<ul>
+					<li>Click <b>Select</b> on toolbar</li>
+					<li>Search customer record using TN / Subscriber Number</li>
+					<li>Confirm Market matches PEARS</li>
+				</ul>
+			</div>
+        </div>
+
+        
+
+        <div class="card urgent">
+            <h3>✅ Suspended TN on AT&T BAN</h3>
+            <ul>
+                <li>Validate:
+                    <ul>
+                        <li>Market</li>
+                        <li>Eligibility</li>
+                        <li>NP Status = <i>Concurrence/Internal Concurrence (Success)</i></li>
+                        <li>Port Status = <i>Confirmed</i></li>
+                    </ul>
+                </li>
+                <li>If valid:
+                    <ul>
+                        <li>Unsuspend from AT&T BAN</li>
+                        <li>Release from MVNO BAN</li>
+                        <li>Send for Replay</li>
+                    </ul>
+                </li>
+                <li><b>Fallout Reason:</b> TN Suspended on AT&T BAN (Outstanding balance, Lost/Stolen, etc.)</li>
+            </ul>
+
+            <h4>🛠 Restore Process</h4>
+            <ol>
+                <li>Open <b>NP Request</b> → Enter TN → Select Port In/Out → Find Now</li>
+                <li>Check Port Status: Success & Response Type: Confirmation</li>
+                <li>If not successful → Submit vTM ticket</li>
+                <li>If successful:
+                    <ul>
+                        <li>Open AT&T BAN → Agreement Tab</li>
+                        <li>Review Suspension Reason (Non-Pay, Fraudulent, Unified Billing)</li>
+                        <li>If Fraudulent/Unified → Return to MVNO & mark “Not Eligible”</li>
+                        <li>To Unsuspend:
+                            <ul>
+                                <li>Click Page Options → Restore Suspended Subscriber</li>
+                                <li>Reason: PR (Procedural) | Memo: Porting</li>
+                            </ul>
+                        </li>
+                        <li>TN status → Active</li>
+                        <li>Open Reserved TN → Agreement Tab → Release TN</li>
+                        <li>Update ServiceNow → Route to MVNO for Replay/Activation</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <div class="card warning">
+            <h3>🌐 NBI Market / NCI Compatible</h3>
+            <ul>
+                <li>TN is in National Business Indicator (NBI) or National Corporate Indicator (NCI) market</li>
+                <li>Check TLG for NBI market</li>
+                <li>Submit vTM to move TN to local market</li>
+                <li>Porting team moves number to temporary BAN</li>
+                <li>GFMO removes PIN requirement or adds to exclusion list</li>
+                <li>Porting team sends info to MVNO</li>
+                <li>If equipment info (IMEI & SIM) & pricing plan available → Submit port via Telegence</li>
+                <li>Send for Replay</li>
+                <li><b>ServiceNow:</b> Mark Port Type = NBI</li>
+                <li><b>Fallout Reason:</b> National Business Indicator</li>
+            </ul>
+        </div>
+
+        <div class="card highlight-card">
+		
+            <h3>🔁 Cross Market Port</h3>
+            <ul>
+                <li>Market Code in PEARS ≠ Market in TLG</li>
+                <li>Submit vTM to move TN to local market</li>
+                <li>Once completed → Send for Replay</li>
+                <li><b>Fallout Reason:</b> Different Markets</li>
+                <li>Required Info:
+                    <ul>
+                        <li>AT&T Account #</li>
+                        <li>Customer 4-digit Billing PIN</li>
+                    </ul>
+                </li>
+                <li>VTM tickets processed in order received (usually &lt;1 business day)</li>
+                <li>Route ticket to MVNO with new Billing Account #</li>
+                <li><b>ServiceNow:</b> Mark Port Type = Cross Market</li>
+            </ul>
+        </div>
+
+		<!-- PEARS -->
+        <div class="card info">
+            <h3>📊 PEARS – Port Eligibility Check</h3>
+            <ul>
+                <li>Enter TN(s) in <b>Phone Number(s)</b> field</li>
+                <li>Click <b>Check Port Eligibility / Reference Data</b></li>
+                <li>Review:
+                    <ul>
+                        <li><b>Portable = No:</b> Submit Porting vTM Ticket</li>
+                        <li><b>Portable = Yes:</b> Continue scrub</li>
+                    </ul>
+                </li>
+                <li>Ensure <b>Market Code</b> matches TLG — if not, follow <i>Cross Market</i> procedures</li>
+            </ul>
+        </div>
+
+        <!-- Telegence -->
+        <div class="card highlight-card">
+            <h3>🧠 Telegence – TN Scrubbing & Port History</h3>
+            
+            <h4>🔹 Login Steps</h4>
+            <ul>
+                <li>Double-click icon → Enter <b>ATTUID</b> → Press Tab</li>
+                <li>Enter <b>Global Password</b> → Press Tab</li>
+                <li>Select environment: <b>XMKT – CROSS MARKET</b></li>
+                <li>Click OK → Main Menu → Click <b>CSM icon</b></li>
+            </ul>
+            <h4>🔍 TN Scrubbing</h4>
+            <ul>
+                <li>Click <b>Select</b> icon</li>
+                <li>Input impacted TN in <b>Number</b> field</li>
+                <li>Select <b>Subscriber</b> as Type</li>
+                <li>Click Retrieve → View all records linked to TN</li>
+            </ul>
+        </div>
+
+
+        
+
+        <!-- ConnEX -->
+        <div class="card highlight-card">
+            <h3>🔗 ConnEX – Port-In Ticket Submission</h3>
+            <h4>📄 Basic Info Required</h4>
+            <ul>
+                <li><b>Telephone Number:</b> 1 impacted TN (attach others)</li>
+                <li><b>Number of Impacted Devices:</b> 1–4, 5–19, 20+</li>
+                <li><b>Description of Issue</b></li>
+                <li><b>Issue Type:</b> Port-In</li>
+            </ul>
+
+            <h4>📝 Trouble Description</h4>
+            <ul>
+                <li><b>Trouble Desc #1:</b> Port In</li>
+                <li><b>Trouble Desc #2:</b> Wireless</li>
+                <li><b>Trouble Desc #3:</b> Other (unless same carrier)</li>
+            </ul>
+
+            <h4>❓ Additional Questions</h4>
+            <ul>
+                <li>Exact Error Message</li>
+                <li>New SIM #</li>
+                <li>IMEI</li>
+                <li>Pricing Plan</li>
+                <li>Customer Full Name</li>
+                <li>OSP Account #</li>
+                <li>Address on OSP Account</li>
+                <li>SSN (Optional)</li>
+                <li>Password / PIN on OSP Account</li>
+            </ul>
+        </div>
+		
+		<!-- Step 1 -->
+        <div class="card highlight-card">
+            <h3>🔹 Ticket Assignment in ServiceNow (SN)</h3>
+            <ul>
+                <li>Pull the <b>Ticket #</b> from ServiceNow.</li>
+                <li>Assign ticket to an individual CST team member.</li>
+                <li><b>Ticket Categories to Work On:</b>
+                    <ul>
+                        <li>DISH → Category = <b>Reactive / Alarming</b></li>
+                        <li>Other Partners → Category = <b>Alarming</b></li>
+                    </ul>
+                </li>
+                <li>⚠️ Do NOT work on tickets where Category = <b>Reactive</b>, except for DISH.</li>
+            </ul>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="card highlight-card">
+            <h3>🔹 Scrub TN in Telegence (TLG)</h3>
+            <p><b>Tool:</b> Telegence</p>
+            <ul>
+                <li>Navigate to <b>CSM → Select</b>.</li>
+                <li>Set Type = <b>Subscriber</b>.</li>
+                <li>Enter TN in Number field → Click Retrieve.</li>
+            </ul>
+            <p><b>Outcomes:</b></p>
+            <ul>
+                <li>No Record Found → Continue to Step 4.</li>
+                <li>Record Found → Verify Market:
+                    <ul>
+                        <li>TLG Market = NBI, or Matches PEARS, or No Record → Continue to Step 4.</li>
+                        <li>TLG Market ≠ PEARS Market (Non-NBI) → Submit Cross Market Porting vTM Ticket.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="card info">
+            <h3>🔹 Check NP-Request in Telegence</h3>
+            <ul>
+                <li>Click <b>NP Request</b>.</li>
+                <li>Enter TN in <b>MDN</b> field.</li>
+                <li>Select <b>Port-In</b> in Path → Click Find.</li>
+            </ul>
+            <p><b>Outcomes:</b></p>
+            <ul>
+                <li><b>Pending Port-In Request Found:</b>
+                    <ul>
+                        <li>Concurrence/Internal Concurrence = Success & Response Type = Confirmation → Continue scrubbing.</li>
+                        <li>Concurrence/Internal Concurrence = Success & Response Type = Resolution Required / Delay / Blank:
+                            <ul>
+                                <li>Check TN status in TLG:
+                                    <ul>
+                                        <li>No BAN associated, No Record, or Suspended on AT&T BAN (except Unified Billing, Fraud Alert, Blacklisted) → Submit Porting vTM Ticket.</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>No Pending Port-In Request → Continue scrubbing.</li>
+            </ul>
+        </div>
+
+        <!-- Special Conditions -->
+        <div class="card urgent">
+            <h3>⚠️ Special Conditions – Unified Billing / Fraud / Blacklisted</h3>
+            <p>If TN is suspended due to:</p>
+            <ul>
+                <li>U-verse / Unified Billing</li>
+                <li>Fraud Alert (Stolen Device Used, DLC Use Only)</li>
+                <li>Blacklisted Device</li>
+            </ul>
+            <p>→ Do NOT proceed with porting. These require special handling or rejection.</p>
+
+            <h4>🔍 Check TN Status in TLG</h4>
+            <ul>
+                <li>If suspended on AT&T BAN for:
+                    <ul>
+                        <li>U-verse / Unified Billing</li>
+                        <li>Fraud Alert (DLC USE ONLY)</li>
+                        <li>Stolen Device Used</li>
+                        <li>Blacklisted Device</li>
+                    </ul>
+                </li>
+                <li>➤ Do NOT unsuspend or release the TN.</li>
+                <li>➤ Action: Send SN# back to the partner with proper notes.</li>
+            </ul>
+
+            <h4>📢 Customer Response (Blacklisted Device)</h4>
+            <p>The device is flagged as blacklisted due to being lost or stolen. The customer may activate on a different device or contact AT&T to remove the blacklist if recovered.</p>
+        </div>
+
+        <!-- NBI Market -->
+        <div class="card warning">
+            <h3>🗂️ NBI Market Scenarios</h3>
+            <h4>A. DISH Partner with Financial Agreement / Installment Plan</h4>
+            <p>Action: Send SN# back to DISH with note about transferring from business to personal account before porting.</p>
+
+            <h4>B. DISH Partner without Financial Agreement / Other Partners</h4>
+            <p>Validate market, eligibility, NP status, and port status, then unsuspend, release, and replay.</p>
+        </div>
+
+        <!-- Non-NBI -->
+        <div class="card info">
+            <h3>🗂️ Non-NBI Market Scenarios</h3>
+            <ul>
+                <li><b>TN Suspended on AT&T BAN & Reserved:</b> Validate & proceed with unsuspend, release, replay.</li>
+                <li><b>No BAN Associated / No Record Found:</b> Validate & send for replay.</li>
+                <li><b>TN Already Active on MVNO BAN:</b>
+                    <ul>
+                        <li>Pending Port-in Request → vTM if Wireless to Wireless, or Wireline to Wireless (after due date).</li>
+                        <li>No Pending Port-in Request → Check Port History; return to partner if already ported.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- No NP Request -->
+        <div class="card urgent">
+            <h3>🛑 No NP Request & No Port History</h3>
+            <p>(Except REACH & NCTC Partners)</p>
+            <ul>
+                <li>Consider TN as <b>Non-Port Activation</b>.</li>
+                <li>Release TN (if reserved).</li>
+                <li>Update SN into non-port activation.</li>
+            </ul>
+        </div>
+
+        <!-- Non-Pay Suspend -->
+        <div class="card highlight-card">
+            <h3>⏳ Porting Update – MVNO Non-Pay Suspend</h3>
+            <ul>
+                <li>Suspension period: <b>90 days</b></li>
+                <li>After cancellation: <b>59 days</b> to resume before number is recycled.</li>
+            </ul>
+        </div>
+    
+        <!-- Monitoring -->
+        <div class="card warning">
+            <h3>⏱️ Monitoring the Ticket</h3>
+            <p>Check VTM every <b>30 minutes</b> for updates or responses.</p>
+        </div>
+
+        <!-- Required Info -->
+        <div class="card info">
+            <h3>📋 Required Information for Submission</h3>
+            <h4>🔄 Porting-Related Info</h4>
+            <ul>
+                <li>Old Service Provider’s Account Number & Name</li>
+                <li>Transfer PIN / Password</li>
+                <li>Service/Billing Address</li>
+                <li>Detailed Issue Description</li>
+                <li>SIM, IMEI, Pricing Plan SOC Code</li>
+                <li>Target BAN (if activation-related)</li>
+                <li>AT&T Account Number & Billing PIN (for Cross Market/NBI Ports)</li>
+            </ul>
+        </div>
+
+        <!-- Cross Market -->
+        <div class="card highlight-card">
+            <h3>🧾 Cross Market & NBI Specifics</h3>
+            <ul>
+                <li>AT&T Account Number</li>
+                <li>Customer Billing PIN (Not Transfer PIN)</li>
+            </ul>
+        </div>
+
+        <!-- Wireline -->
+        <div class="card info">
+            <h3>☎️ Wireline/Landline Specifics</h3>
+            <ul>
+                <li>Correct Billing Name</li>
+                <li>Full Physical Address</li>
+                <li>Landline Account Number</li>
+                <li>Customer Billing PIN</li>
+            </ul>
+            <p><i>Note: Wireline cases may be more complex due to mixed services.</i></p>
+        </div>
+
+        <!-- SLA -->
+        <div class="card warning">
+            <h3>⏳ VTM SLA (Service Level Agreement)</h3>
+            <ul>
+                <li>Standard SLA: <b>48–72 hours</b></li>
+                <li>Do NOT update the VTM ticket if reseller requests early action (this resets timer).</li>
+                <li>Do NOT disclose TAT to reseller.</li>
+                <li>Escalation: Add note in DDPC Chat Room.</li>
+            </ul>
+        </div>
+
+        <!-- Errors -->
+        <div class="card urgent">
+            <h3>❌ Error Codes & Resolutions</h3>
+            <p>Below are common error messages and how to resolve them:</p>
+
+            <h4>1C – Network SP Not Ready</h4>
+            <p>Modify due date/time and resubmit: Wireless = +3 hrs, Wireline = +24 hrs</p>
+
+            <h4>1E – End User Not Ready</h4>
+            <p>Contact PAC.</p>
+
+            <h4>1L / 1M / 1N – Due Date Issues</h4>
+            <p>Modify due date/time accordingly and resubmit.</p>
+
+            <h4>1P – MDN Issues</h4>
+            <p>Check if number is in other request, obtain correct OSP account, or dispute eligibility.</p>
+
+            <h4>6A – MDN Not Found</h4>
+            <p>Verify porting number and resubmit.</p>
+
+            <h4>6B – Same New & Old Provider</h4>
+            <p>Contact PAC.</p>
+
+            <h4>6C – Customer Info Mismatch</h4>
+            <p>Verify all customer data and resubmit.</p>
+
+            <h4>6D – Multiple Reasons (Inactive, Cancelled, No Active Records)</h4>
+            <p>Verify OSP, correct info, restore service if needed, then resubmit.</p>
+
+            <h4>6E / 6F – Due Date Cannot be Met</h4>
+            <p>Modify due date/time and resubmit.</p>
+
+            <h4>6G–6L – PAC Required</h4>
+            <p>Contact PAC for Port Complexity, Outage, High Volume, Non-portable Numbers, or After-hours requests.</p>
+
+            <h4>6M – Port Pending with Another Carrier</h4>
+            <p>Customer must cancel pending port before resubmission.</p>
+
+            <h4>6N – Duplicate Port Request</h4>
+            <p>Contact PAC to locate and complete existing request.</p>
+
+            <h4>6P – Port Protection</h4>
+            <p>Customer must request removal of protection before resubmission.</p>
+
+            <h4>7A / 7B / 7C / 7D – Multi-line, Fax, Prepay, Sequence Issues</h4>
+            <p>Review numbers individually, contact PAC, or update account password.</p>
+
+            <h4>8A–8G – Missing/Incorrect Account Info</h4>
+            <p>Obtain correct account number, SSN/Tax ID, PIN, ZIP, Name, or Business Name and resubmit.</p>
+        </div>
+	
+		<!-- Overview -->
+        <div class="card highlight-card">
+            <h3>📄 Process Overview</h3>
+            <p>Guidelines for handling escalation and closure of porting & non-porting issues efficiently.</p>
+        </div>
+
+        <!-- Non-porting -->
+        <div class="card info">
+            <h3>🔄 When It’s <u>NOT</u> a Porting Issue</h3>
+            <ul>
+                <li>Follow <b>standard escalation protocols</b>.</li>
+                <li>Use <b>DDPC War Room</b> or email escalation depending on partner type and issue.</li>
+            </ul>
+        </div>
+
+        <!-- 48 Hour Rule -->
+        <div class="card warning">
+            <h3>⏳ 48-Hour Closure Rule</h3>
+            <h4>✅ Applicable Partners</h4>
+            <p>All partners except DISH and Wireline cases.</p>
+            <p><b>Standard Note to Reseller:</b> <i>“Please be informed that if a response is not received in 48 hours, the ticket will be closed. Thank you.”</i></p>
+
+            <h4>❌ Exceptions</h4>
+            <ul>
+                <li>Wireline cases with future activation dates</li>
+                <li>AirVoice tickets where Response Type = Port Complexity / Resolution Required</li>
+            </ul>
+
+            <h4>📌 Example Statement</h4>
+            <blockquote>“Ready to Replay. Unsuspend and released. Please be informed that if a response is not received in 48 hours, the ticket will be closed. Thank you.”</blockquote>
+        </div>
+
+        <!-- DDPC War Room -->
+        <div class="card highlight-card">
+            <h3>🛠️ DDPC War Room (PAC Team Support)</h3>
+            <p><b>Purpose:</b> Dedicated channel to contact PAC Team for:</p>
+            <ul>
+                <li>Queries</li>
+                <li>Clarifications</li>
+                <li>Escalations related to Port-in TNs</li>
+            </ul>
+            <p><b>Action:</b> Inform PAC via DDPC War Room and follow their guidance.</p>
+        </div>
+
+        <!-- Email Escalation -->
+        <div class="card info">
+            <h3>📧 Escalation for Stuck Port Requests</h3>
+            <h4>🔁 Legacy Partners (DISH, US Mobile, Telgoo5)</h4>
+            <ul>
+                <li>If TNs are active in TLG but port requests are stuck in NPAC:</li>
+                <li>Escalate via email to: <a href="mailto:wlnpctownreseller@att.com">wlnpctownreseller@att.com</a></li>
+                <li>Include <b>all affected TNs</b> in the email.</li>
+            </ul>
+
+            <h4>💬 Other Partners</h4>
+            <ul>
+                <li>Use <b>PSO Chat (MS Teams)</b> to inform and escalate.</li>
+            </ul>
+        </div>
+	
+	</div>
+</div>
+
+<!-- DOC: Tier III Areas of Emphasis -->
+<div id="tierAOE" class="tab-content">
+    <h2>📄 DOC: Tier III Areas of Emphasis</h2>
+    <div class="content">
+
+        <div class="card info">
+            <h3>Subscriber Connectivity: Roaming</h3>
+            <ul>
+                <li>In <b>Torch</b> → EPC HSS tab → Transient Information.</li>
+                <li><mark>Purged in MME:</mark> If True, note in troubleshooting.</li>
+                <li><mark>Attach Status:</mark> Should be “Currently Attached in VPLMN (3)”.</li>
+                <li>If “Never Attached (0)” → RSA/OTA needed → instruct reseller to power cycle & configure APN.</li>
+                <li>Verify Attach Timestamp matches current date.</li>
+                <li>Check Visited PLMN MCC/MNC matches roaming country.</li>
+                <li>Review OTA history in Torch (success/fail).</li>
+                <li>Check Reseller Care for roaming transactions & bucket fill (Voice/Text/Data).</li>
+                <li>In Telegence, verify Roam Zone SOC and OTA after SOC changes.</li>
+            </ul>
+        </div>
+
+        <div class="card warning">
+            <h3>API Issue</h3>
+            <ul>
+                <li>Check case description for API impacted & conversation IDs.</li>
+                <li>Look up conversation ID in OpenSearch for error details.</li>
+                <li>If timestamp after business hours → advise retry during operational hours.</li>
+                <li>For UpdateSubscriberProfile/Status: verify TN has no pending port request in TLG.</li>
+                <li>Ports out block UpdateSubscriberStatus API calls.</li>
+            </ul>
+        </div>
+
+        <div class="card urgent">
+            <h3>Billing: Subscriber Billing</h3>
+            <ul>
+                <li>Missing CDR files → ask reseller to resubmit under B2B Billing.</li>
+                <li>Invoice disputes → resubmit under Billing Dispute.</li>
+                <li>If TN inactive in Ericsson → check TLG & Reseller Care.</li>
+                <li>If TN belongs to another reseller → perform cancel/resume in TLG.</li>
+            </ul>
+        </div>
+
+        <div class="card info">
+            <h3>Subscriber Connectivity: Voicemail</h3>
+            <ul>
+                <li>In TLG, check Basic Voicemail SOC is added.</li>
+                <li>Password/lockout: in Torch VM tab, uncheck “require password” & retry.</li>
+            </ul>
+        </div>
+
+        <div class="card warning">
+            <h3>Subscriber Connectivity: SMS/MMS</h3>
+            <ul>
+                <li>In Reseller Care, check Voice/Text/Data buckets are filled.</li>
+                <li>If International MMS bucket missing → inform reseller or confirm with Ericsson.</li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+<!-- DOC: ATT Tier 3 Porting Troubleshooting Job Aid for Reach Support -->
+<div id="PortingTroubleshooting" class="tab-content">
+    <div class="content">
+	<h2>📄 DOC: ATT Tier 3 Porting Troubleshooting Job Aid for Reach Support</h2>
+    <div class="card info">
+        <strong>General Step:</strong> For all port requests, pull the CTN in PEARS to identify market code, current service provider, and type.
+        <ul>
+            <li>Input TN in Phone Number box → Click "Check Port Eligibility/Reference Data".</li>
+            <li>Retrieve Portable status, Service Provider Name & Type, Market Code.</li>
+            <li>In TLG, confirm market matches PEARS before proceeding.</li>
+        </ul>
+    </div>
+
+    <!-- Scenario 1 -->
+    <div class="card urgent">
+        <h3>📌 Unsuspend / Release</h3>
+        <p><strong>Summary:</strong> TN is Suspended on AT&T BAN.</p>
+        <ul>
+            <li>Validate: Market, Eligibility, NP Status = Concurrence/Internal Concurrence (Success), Port Status = Confirmed.</li>
+            <li>Unsuspend from AT&T BAN → Release from MVNO BAN → Send for Replay.</li>
+            <li>Fallout Reason: Suspended (Outstanding balance, lost, stolen, etc.).</li>
+        </ul>
+        <p><strong>Extra:</strong> If Fraudulent or Unified Billing, return to partner with note.</p>
+    </div>
+
+    <!-- Scenario 2 -->
+    <div class="card info">
+        <h3>🏙 NBI Market / NCI Compatible</h3>
+        <p>TN is in NBI/NCI market – can move to local market without financial agreement.</p>
+        <ol>
+            <li>Check TLG for NBI marker.</li>
+            <li>Submit VTM to move TN to local market.</li>
+            <li>Porting team moves to temporary BAN and requests GFMO pin exclusion.</li>
+            <li>Proceed with port via Telegence and send for Replay.</li>
+        </ol>
+        <p><strong>Fallout Reason:</strong> National Business Indicator.</p>
+    </div>
+
+    <!-- Scenario 3 -->
+    <div class="card warning">
+        <h3>🌐 Cross Market</h3>
+        <p><strong>Summary:</strong> PEARS Market Code ≠ TLG Market.</p>
+        <ul>
+            <li>Submit VTM to move TN to local market.</li>
+            <li>Include AT&T Account # and Billing PIN (not transfer PIN).</li>
+            <li>Route ticket to MVNO with new BAN for port.</li>
+            <li>Turnaround: &lt; 1 business day.</li>
+        </ul>
+        <p><strong>Fallout Reason:</strong> Different Markets.</p>
+    </div>
+
+    <!-- Scenario 4 -->
+    <div class="card urgent">
+        <h3>📑 Unified Billing</h3>
+        <p>Not eligible – TN on unified bill in TLG, not eligible in PEARS, or suspended due to fraud.</p>
+        <ul>
+            <li>Return to MVNO: “TN suspended/canceled due to Unified Billing, ask customer to call ATT Unified Billing.”</li>
+            <li>No action allowed if suspended/canceled.</li>
+        </ul>
+        <p><strong>Fallout Reason:</strong> Not Eligible / Bundled / Unified Bill.</p>
+    </div>
+
+    <!-- Scenario 5 -->
+    <div class="card highlight-card">
+        <h3>🔄 Concurrence / Internal Concurrence</h3>
+        <p>TN not active on MVNO BAN.</p>
+        <ol>
+            <li>Check NP Request – Status must be Success and Response = Confirmation.</li>
+            <li>If confirmed → Send for Replay.</li>
+            <li>If Delay/Port complexity → Submit VTM.</li>
+        </ol>
+        <p><strong>Fallout Reason:</strong> Stuck in Concurrence / Internal Concurrence.</p>
+    </div>
+
+    <!-- Scenario 6 -->
+    <div class="card info">
+        <h3>✅ Already Active</h3>
+        <p>TN already active on MVNO BAN.</p>
+        <ul>
+            <li>Scenario 1: No NP Request, but present in Port History → Send for Replay.</li>
+            <li>Scenario 2: NP Request active → Validate rules, then Replay.</li>
+            <li>If not cleared NPAC → Send to PAC team via VTM.</li>
+        </ul>
+        <p><strong>Fallout Reason:</strong> Stuck Port / Manual Activation needed.</p>
+    </div>
+	<div class="card highlight-card"><h1>END of the DOC</h1></div>
+
+        <div class="card urgent">
+			<h3>📌 Incorrect Port Status – PAC Team Involvement</h3>
+			<p>If an <b>incorrect port status</b> is detected, follow these steps in order:</p>
+			
+			<ol>
+				<li>
+					<b>Contact PAC Team:</b>  
+					Post in the <b>DDPC War Room</b> with the following message:  
+					<div class="highlight-text" id="ddpcPrompt">
+						<div class="card info"><b>DDPC War Room Prompt:</b> <br>
+							<code id="warRoomText">Hi Team, We require your assistance on TN##########, where DISH has submitted an incorrect Port request. Can we create a VTM with new information of Port request to process the Portin.</code>
+            
+						</div>
+					</div>
+					
+
+				</li>
+				
+				<li>
+					<b>After VTM Creation:</b>  
+					Once the VTM is created, send this update in the DDPC War Room:  <div class="card info">Hello - VTM had been created. Please review at your convenience.</div>
+					
+				</li>
+				
+				<li>
+					<b>Update ServiceNow:</b>  
+					Add the following to <b>internal notes</b>:  <div class="card info">VTM had been created VTM#......</div>
+				</li>
+			</ol>
+		</div>
+        
+		<div class="card warning">
+            <h3>Cross Market Issue</h3>
+            <ul>
+                <li>Occurs when <b>PEARS (Market Code)</b> and <b>Telegence</b> have different markets assigned.</li>
+                <li><mark>Note:</mark> Ensure no port request is assigned before creating VTM.</li>
+                <li>Once VTM is created:
+                    <ul>
+                        <li>Send message in DDPC War Room: <div class="card info">"Hello - VTM had been created. Please review at your convenience."</div></li>
+                        <li>Update ServiceNow with: <div class="card info">"Created #VTM...... for cross-market."</div></li>
+                    </ul>
+                </li>
+                <li><b>VTM Reference:</b> VTM000052588336, VTM000052583883</li>
+                <li><b>ServiceNow Reference:</b> mp000183142</li>
+            </ul>
+        </div>
+		<!-- Case 1 -->
+    <div class="card info">
+        <h3>Case 1: TN Not Found in TLG</h3>
+        <p>
+            If the <b>Telephone Number (TN)</b> is not found in TLG and shows <em>(no record found)</em>, it means it has never been in the AT&T network.  
+            A <span class="urgent">VTM</span> must be created for the PAC team.
+        </p>
+        <p><b>ServiceNow</b> <span class="highlight">mp000185530</span></p>
+    </div>
+
+    <!-- Case 2 -->
+    <div class="card warning">
+        <h3>Case 2: Two Different IMEIs but Same Model (e.g., Apple)</h3>
+        <ul>
+            <li>Check <b>IMEI</b> in Torch and Telegence.</li>
+            <li>In Torch: Go to <strong>Device > Service > Dual SIM Device IMEIs</strong> and get the IMEI number from Torch.</li>
+        </ul>
+		<!-- Validation Steps -->
+		<div class="card info">
+			<h3>Validation Steps</h3>
+			<ul>
+				<li>Go to <strong>Connex</strong> > Self Service Portal.</li>
+				<li>Search using <strong>Torch IMEI</strong>(Inquire Device Status).</li>
+				<li><strong>Check:</strong></li>
+				<ul>
+					<li>Blacklist Ind: N = Good.</li>
+					<li>ATT Capability: Green = Good, Red or Yellow = Not Good.</li>
+				</ul>
+			</ul>
+		</div>
+    </div>
+
+    
+        
+    </div>
+</div>
+
+<!-- VTM creation -->
+<div id="VTMCreation" class="tab-content">
+
+    <!-- Card 1: Start -->
+    <div class="card info">
+        <h3>📝 Step 1: Create Issue</h3>
+        <p>Click <b>Create Issue</b> in the VTM portal to begin.</p>
+    </div>
+
+    <!-- Card 2: Classification Fields -->
+    <div class="card info">
+        <h3>📝 Step 2: Fill Out Classification Fields</h3>
+        <ul>
+            <li>Level 1: <span class="highlight">Port Request</span></li>
+            <li>Level 2: <span class="highlight">Wireless (Telegence > NP Request > Request Form)</span></li>
+            <li>Level 3: <span class="highlight">Port In</span></li>
+            <li>Level 4: <span class="highlight">Telegence → NP Request → Request Form → Other Network SP</span> 
+                <small>(If not available, select AT&T)</small>
+            </li>
+            <li>CTN: Customer Telephone Number</li>
+            <li>BAN: <span class="highlight">Telegence → BAN Tab → Right-click to copy</span></li>
+            <li>Severity: <span class="warning">1 - 4 devices</span></li>
+            <li>Created By: Auto-filled</li>
+            <li>Submit Contact Number: Auto-filled</li>
+            <li>Submitter Email Address: Auto-filled (AT&T email)</li>
+            <li>Country: USA</li>
+            <li>Case ID: From ServiceNow ticket (<span class="highlight">Correlation ID</span>)</li>
+            
+        </ul>
+    </div>
+
+    <!-- Card 3: Ticket Details -->
+    <div class="card info">
+        <h3>📝 Step 3: Ticket Details Section</h3>
+        <ul>
+			<li>Problem Abstract: Copy from SN, add <i>"Submitting on behalf of {reseller}"</i></li>
+            <li>Problem Extract: <span class="highlight">Concierge Team on Behalf of Dish Boost – Cross Market</span></li>
+            <li>Brief Description: Clearly state requirements</li>
+            <li>Comments: Include additional context</li>
+        </ul>
+    </div>
+
+    <!-- Card 4: Submit -->
+    <div class="card urgent">
+        <h3>🚀 Step 4: Save & Submit</h3>
+        <p>✅ Click <b>Save</b> to submit the ticket.</p>
+    </div>
+
+    <!-- Card 5: Reference Tickets -->
+    <div class="card warning">
+        <h3>📂 Reference Tickets</h3>
+        <ul>
+            <li id="ref1">VTM - <span class="highlight">VTM000052588161</span></li>
+            <li id="ref2">ServiceNow - <span class="highlight">mp000183100</span></li>
+        </ul>
+    </div>
+
+</div>
+
+<!-- Device & Network Checks -->
+<div id="Device" class="tab-content">
+    <h2>📡 Device & Network Checks</h2>
+    <div class="content">
+        <div class="card info">Another Primary SN Case Available: No</div>
+		<div class="card info">
+			<b>Device (TORCH) – Software version/ Model / OS Version</b> <code>Torch → Device → Services → Device Details → input TN</code><br> Ex: Device (TORCH) – ONEPLUS TECHNOLOGY / CPH2513 / Software version-65 / OS version- NA (Device Details))
+		</div>
+		<div class="card warning"> Device Certified (via Master IMEI File) – Yes/No</div>
+		<div class="card info"> Subscriber Activation Date (TLG/E:\\) - 07/31/2025</div>
+		<div class="card info">
+			<b>Rate Plan / SOCs:</b> Select <code>TN → Agreement → Price Plan → PP</code>.
+		</div>
+		<div class="card info"> RZ SOC / Carrier - <code>TN → Agreement → Additional services → SOC</code> Ex:USMULDP1O (USMU O INTL CALL AL)</div>
+		<div class="card info"> Valid Rate Plan (MVNO) - Yes</div>
+		<div class="card warning">
+			<b>IMS HSS Registration Status:</b>  <code>IMS HSS → Private User ID  </code>
+			<ul>
+				<li><b>Registered:</b> Good ✅</li>
+				<li><b>Not Registered:</b> OTA is needed</li>
+				<li><b>Never Registered:</b> RSA is needed</li>
+				<div class="card highlight-card"> <b>Note:</b>Except Roaming case, For all subscriber connectivity cases IMS HSS will a part of troubleshooting</div>
+			</ul>
+		</div>
+		<div class="card info"> Confirm ICCID? – Identical to billing system.</div>
+		<div class="card info"> Confirm IMEI - Identical to billing system.
+			<div class="card highlight-card"> For IMEI, use the <b>MIND Tab</b>.</div>
+		</div>
+		<div class="card info">
+			<b>Confirm APN Name In Use:</b> In Torch MME, search with <code>"in use"</code>.
+		</div>
+		<div class="card info"> Confirm APN Name (Torch PDP) - <code>PDP → PDP Setting → Default PDP :ENHANCEDPHONE</code></div>
+		<div class="card info"> Check PEARS (current network carrier) - CINGULAR WIRELESS</div>
+		<div class="card warning"> Check E// Prepay? – Active in E//, Prepaid Customer</div>
+		<div class="card info"> OTA Pending (Torch) – No</div>
+		<div class="card info"> Last OTA succeeded - 2025/07/31 20:14:40 EST</div>
+		<div class="card warning"> AT&T Certified – No/Yes</div>
+		<div class="card warning"> AT&T Compatibility - Yes/No</div>
+		<div class="card warning"> BYOD(Bring your own device) Device – Yes/No</div>
+		<div class="card warning">
+			<b>EPC HSS – Purged in MME:</b>  <code>TORCH → EPC HSS → Transient Information </code> 
+			<ul>
+				<li><b>False:</b> Good ✅</li>
+				<li><b>True:</b> Not Good ❌</li>
+			</ul>
+		</div>
+		<div class="card info"> Balance on Bucket – Available on all bucket like Data, SMS, MMS and Voice</div>
+		<div class="card info">
+			<b>Attach Timestramp: </b><code>TORCH → EPC HSS → Transient Information → MME Registration</code>.
+		</div>
+		<div class="card highlight-card">referance: mp000185743, mp000185945</div>
+    </div>
+</div>
+
+<!-- MVNO Notification -->
+<div id="MVNONotification" class="tab-content">
+    <h2>📢 MVNO Notification Process</h2>
+    <div class="content">
+        <div class="card info">Use approved templates (Initial, Update, Restore).</div>
+        <div class="card info">Format in single-cell Outlook table, no auto-signature.</div>
+        <div class="card info">Sender: MVNO mailbox.</div>
+        <div class="card info">BCC for multiple partners, TO for single partner.</div>
+        <div class="card warning">Approval from Charles or on-call before sending.</div>
+        <div class="card urgent">Send within 15 minutes of identifying the issue.</div>
+    </div>
+</div>
+
+<!-- MDE -->
+<div id="MDE" class="tab-content">
+    <h2>📂 Mass Data Entry (MDE) Process</h2>
+    <div class="content">
+        <div class="card info">Request from Charles + VP approval.</div>
+        <div class="card warning">Prepare ~20 record sample in CSV (Mobile #, Market, SOC, Dates, Notes).</div>
+        <div class="card info">Submit to Charles, must achieve ≥90% success rate.</div>
+        <div class="card info">Full file creation → sent to Charles.</div>
+        <div class="card info">MDE processes file in batches.</div>
+        <div class="card info">Validate subset in Telegence, check SOC changes & notes.</div>
+        <div class="card warning">Correct fallout records & reprocess.</div>
+    </div>
+</div>
+
+<!-- Tools & Portals -->
+<div id="Tools" class="tab-content">
+    <h2>🛠 Tools & Portals</h2>
+    <div class="tool-grid">
+
+        <a href="https://att.sharepoint.com/sites/massdataentry/MDE%2020%20Templates/Forms/Templates.aspx" target="_blank" class="tool-card info">
+            <span class="tool-icon">📂</span>
+            <span class="tool-name">MDE Templates</span>
+        </a>
+
+        <a href="https://att.sharepoint.com/sites/scmr/IMEI_Master/Shared%20Documents/Forms/AllItems.aspx?viewid=de2c9b5e%2Da926%2D4ac0%2D968b%2D718f18998a44&noAuthRedirect=1" target="_blank" class="tool-card info">
+            <span class="tool-icon">📱</span>
+            <span class="tool-name">IMEI Master</span>
+        </a>
+
+        <a href="https://mti.az.3pc.att.com/mti/csr/" target="_blank" class="tool-card highlight-card">
+            <span class="tool-icon">📊</span>
+            <span class="tool-name">MTI</span>
+        </a>
+
+        <a href="https://prepaidreseller.tdc.cingular.net/webrc/" target="_blank" class="tool-card info">
+            <span class="tool-icon">📡</span>
+            <span class="tool-name">E// Reseller Care</span>
+        </a>
+
+        <a href="https://torch.web.att.com/ui/" target="_blank" class="tool-card urgent">
+            <span class="tool-icon">🔥</span>
+            <span class="tool-name">Torch</span>
+        </a>
+
+        <a href="https://connex.att.com/servicedesk/" target="_blank" class="tool-card warning">
+            <span class="tool-icon">💬</span>
+            <span class="tool-name">Connex</span>
+        </a>
+
+        <a href="https://onetool.web.att.com/" target="_blank" class="tool-card info">
+            <span class="tool-icon">🧰</span>
+            <span class="tool-name">GTOC</span>
+        </a>
+
+        <a href="https://pears.az.3pc.att.com/PEARS/" target="_blank" class="tool-card highlight-card">
+            <span class="tool-icon">🍐</span>
+            <span class="tool-name">Pears</span>
+        </a>
+
+        <a href="https://gears.az.3pc.att.com/GEARS/" target="_blank" class="tool-card info">
+            <span class="tool-icon">⚙️</span>
+            <span class="tool-name">Gears</span>
+        </a>
+
+        <a href="https://ubm.web.att.com/mytasks" target="_blank" class="tool-card warning">
+            <span class="tool-icon">📋</span>
+            <span class="tool-name">UBM</span>
+        </a>
+
+        <a href="http://reseller.ctx.web.att.com/Citrix/ResellerWeb/" target="_blank" class="tool-card info">
+            <span class="tool-icon">🌐</span>
+            <span class="tool-name">Telegence</span>
+        </a>
+
+        <a href="https://ushportal.it.att.com/step3.cfm?home=ush&app=3834&prob=51419" target="_blank" class="tool-card highlight-card">
+            <span class="tool-icon">🇺🇸</span>
+            <span class="tool-name">USH 3</span>
+        </a>
+
+        <a href="https://www.e-access.att.com/eforc/requestcenter/" target="_blank" class="tool-card info">
+            <span class="tool-icon">⚡</span>
+            <span class="tool-name">Eforce</span>
+        </a>
+
+        <a href="https://moose.web.att.com/" target="_blank" class="tool-card warning">
+            <span class="tool-icon">🦌</span>
+            <span class="tool-name">Moose</span>
+        </a>
+
+        <a href="http://aotsctswl.it.att.com:8301/arsys/forms/aotscts.it.att.com/CTS%3AControl_Panel/Default+Admin+View/?cacheid=a8a9835c" target="_blank" class="tool-card urgent">
+            <span class="tool-icon">🔧</span>
+            <span class="tool-name">AOTS</span>
+        </a>
+
+        <a href="https://www.att.com/maps/wireless-coverage.html" target="_blank" class="tool-card info">
+            <span class="tool-icon">🗺️</span>
+            <span class="tool-name">Wireless Coverage</span>
+        </a>
+    </div>
+</div>
+
+<!-- Miscellaneous -->
+<div id="Miscellaneous" class="tab-content">
+    <h2>📢 Miscellaneous</h2>
+    <div class="content">
+        <div class="card info">MOTO's: <code>SN → 32719, MVNO → 33062</code></div>
+        <div class="card info"> </div>
+        <div class="card info"> </div>
+        <div class="card info"> </div>
+        <div class="card warning"> </div>
+        <div class="card urgent"> </div>
+    </div>
+</div>
+
+<script>
+function openTab(evt, tabId) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    evt.currentTarget.classList.add('active');
+}
+const tabs = document.querySelector('.tabs');
+let isDown = false;
+let startX;
+let scrollLeft;
+
+tabs.addEventListener('mousedown', (e) => {
+    isDown = true;
+    startX = e.pageX - tabs.offsetLeft;
+    scrollLeft = tabs.scrollLeft;
+});
+tabs.addEventListener('mouseleave', () => isDown = false);
+tabs.addEventListener('mouseup', () => isDown = false);
+tabs.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - tabs.offsetLeft;
+    const walk = (x - startX) * 2; // drag speed
+    tabs.scrollLeft = scrollLeft - walk;
+});
+
+
+function searchContent() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const cards = document.querySelectorAll('.card');
+
+    if (!query) {
+        // If search is empty, show everything
+        document.querySelectorAll('.section').forEach(section => {
+            section.style.display = 'block';
+        });
+        cards.forEach(card => {
+            card.style.display = 'block';
+        });
+        return;
+    }
+
+    let foundSections = new Set();
+
+    // Hide all cards first
+    cards.forEach(card => {
+        card.style.display = 'none';
+    });
+
+    // Show matching cards
+    cards.forEach(card => {
+        if (card.innerText.toLowerCase().includes(query)) {
+            card.style.display = 'block';
+            foundSections.add(card.closest('.section'));
+        }
+    });
+
+    // Hide all sections first
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+    });
+
+    // Show only sections that have matching cards
+    foundSections.forEach(section => {
+        section.style.display = 'block';
+    });
+}
+
+</script>
+
+</body>
+</html>
